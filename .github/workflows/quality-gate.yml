@@ -8,46 +8,121 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate QA Markdown
+      - name: Run QA Markdown Quality Gate
         run: |
 
-          echo "Searching for QA markdown files..."
+          echo "Starting QA Markdown Quality Gate"
 
           FILES=$(find . -iname "qa_*.md")
 
           if [ -z "$FILES" ]; then
-            echo "❌ No QA markdown file found"
+            echo "❌ No QA markdown file (qa_*.md) found"
             exit 1
           fi
 
           FAIL=0
 
           for file in $FILES; do
-            echo "Checking $file"
+
+            echo "--------------------------------"
+            echo "Checking file: $file"
+
+            ANSWER_FOUND=0
+            EVIDENCE_FOUND=0
 
             while IFS= read -r line; do
 
-              if [[ "$line" =~ ^Evidence: ]]; then
+              # Normalize line
+              CLEAN=$(echo "$line" | xargs)
 
-                VALUE=$(echo "$line" | sed 's/^Evidence://g' | xargs)
+              # ---------- CHECK ANSWER ----------
+              if [[ "$CLEAN" =~ ^Answer: ]]; then
 
-                if [ -z "$VALUE" ]; then
-                  echo "❌ Missing evidence in $file"
+                ANSWER_FOUND=1
+
+                VALUE=$(echo "$CLEAN" | sed 's/^Answer://g' | xargs)
+
+                if [[ "$VALUE" != "YES" && "$VALUE" != "NO" ]]; then
+                  echo "❌ Invalid Answer value: '$VALUE' in $file"
+                  FAIL=1
+                fi
+              fi
+
+
+              # ---------- CHECK EVIDENCE ----------
+              if [[ "$CLEAN" =~ ^Evidence: ]]; then
+
+                EVIDENCE_FOUND=1
+
+                VALUE=$(echo "$CLEAN" | sed 's/^Evidence://g' | xargs)
+
+                if [[ -z "$VALUE" ]]; then
+                  echo "❌ Missing Evidence in $file"
                   FAIL=1
                 fi
 
+                if [[ "$VALUE" == "-" || "$VALUE" == "none" || "$VALUE" == "tbd" || "$VALUE" == "TBD" ]]; then
+                  echo "❌ Invalid Evidence value '$VALUE' in $file"
+                  FAIL=1
+                fi
               fi
+
+
+              # ---------- COVERAGE CHECK ----------
+              if [[ "$CLEAN" =~ ^Coverage: ]]; then
+
+                VALUE=$(echo "$CLEAN" | sed 's/^Coverage://g' | tr -d '%' | xargs)
+
+                if [[ "$VALUE" =~ ^[0-9]+$ ]]; then
+
+                  if [ "$VALUE" -lt 80 ]; then
+                    echo "❌ Coverage too low ($VALUE%) in $file"
+                    FAIL=1
+                  fi
+
+                fi
+              fi
+
+
+              # ---------- JIRA FORMAT CHECK ----------
+              if [[ "$CLEAN" =~ [A-Z]+-[0-9]+ ]]; then
+
+                TICKET=$(echo "$CLEAN" | grep -oE '[A-Z]+-[0-9]+' | head -n1)
+
+                if [[ ! "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
+                  echo "❌ Invalid Jira ticket format: $TICKET"
+                  FAIL=1
+                else
+                  echo "Jira ticket detected: $TICKET"
+                fi
+              fi
+
 
             done < "$file"
 
+
+            # Ensure both fields exist
+            if [ $ANSWER_FOUND -eq 0 ]; then
+              echo "❌ No Answer field found in $file"
+              FAIL=1
+            fi
+
+            if [ $EVIDENCE_FOUND -eq 0 ]; then
+              echo "❌ No Evidence field found in $file"
+              FAIL=1
+            fi
+
           done
 
+
+          echo "--------------------------------"
+
           if [ $FAIL -eq 1 ]; then
-            echo "Quality Gate FAILED"
+            echo "❌ QA Quality Gate FAILED"
             exit 1
           else
-            echo "Quality Gate PASSED"
+            echo "✅ QA Quality Gate PASSED"
           fi
