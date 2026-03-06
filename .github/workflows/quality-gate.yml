@@ -14,11 +14,18 @@ jobs:
       - name: Validate QA Markdown
         run: |
 
-          echo "Scanning markdown files..."
+          echo "Searching for QA markdown files..."
+
+          FILES=$(find . -iname "qa_*.md")
+
+          if [ -z "$FILES" ]; then
+            echo "❌ No QA markdown file found"
+            exit 1
+          fi
 
           FAIL=0
 
-          for file in $(find . -name "qa_*.md"); do
+          for file in $FILES; do
             echo "Checking $file"
 
             while IFS= read -r line; do
