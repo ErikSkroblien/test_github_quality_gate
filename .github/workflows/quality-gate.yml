@@ -2,9 +2,6 @@ name: QA Markdown Quality Gate
 
 on:
   pull_request:
-    paths:
-      - '**qa_*.md'
-      - '**.md'
 
 jobs:
   check_markdown:
@@ -16,22 +13,27 @@ jobs:
 
       - name: Validate QA Markdown
         run: |
-          echo "Checking QA markdown files..."
+
+          echo "Scanning markdown files..."
 
           FAIL=0
 
           for file in $(find . -name "qa_*.md"); do
             echo "Checking $file"
 
-            while read -r line; do
-              if [[ "$line" == Evidence:* ]]; then
-                VALUE=$(echo "$line" | sed 's/Evidence://g' | xargs)
+            while IFS= read -r line; do
+
+              if [[ "$line" =~ ^Evidence: ]]; then
+
+                VALUE=$(echo "$line" | sed 's/^Evidence://g' | xargs)
 
                 if [ -z "$VALUE" ]; then
-                  echo "ERROR: Missing evidence in $file"
+                  echo "❌ Missing evidence in $file"
                   FAIL=1
                 fi
+
               fi
+
             done < "$file"
 
           done
