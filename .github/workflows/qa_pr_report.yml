@@ -7,7 +7,6 @@ on:
 jobs:
   qa-report:
     runs-on: ubuntu-latest
-    needs: dashboard  # stellt sicher, dass Dashboard zuerst läuft
 
     steps:
       - name: Checkout
@@ -47,9 +46,6 @@ jobs:
             Questions: ${questions}
             Open Evidences: ${open}
             Coverage: ${coverage}%
-
-            Dashboard:
-            https://ErikSkroblien.github.io/test_github_quality_gate/qa_summary.html
             `
             github.rest.issues.createComment({
               issue_number: context.issue.number,
