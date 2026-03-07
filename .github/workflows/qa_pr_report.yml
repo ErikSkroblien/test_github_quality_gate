@@ -6,6 +6,7 @@ on:
 jobs:
   qa-report:
     runs-on: ubuntu-latest
+    needs: dashboard   # Sicherstellen, dass Dashboard zuerst läuft
 
     steps:
       - name: Checkout
@@ -16,16 +17,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Generate QA Report
-        run: python qa_to_html.py
+      - name: Install dependencies
+        run: pip install -r requirements.txt || echo "No extra deps"
 
-      - name: Read JSON
+      - name: Read QA JSON
         id: qa
         run: |
+          echo "Checking JSON report"
+          cat docs/qa_summary.json
           QUESTIONS=$(jq '[.modules[].questions] | add' docs/qa_summary.json)
           OPEN=$(jq '[.modules[].open] | add' docs/qa_summary.json)
           COVERAGE=$((100 - OPEN * 100 / QUESTIONS))
-
           echo "questions=$QUESTIONS" >> $GITHUB_OUTPUT
           echo "open=$OPEN" >> $GITHUB_OUTPUT
           echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
@@ -46,9 +48,8 @@ jobs:
             Coverage: ${coverage}%
 
             Dashboard:
-            https://erikskroblien.github.io/test_github_quality_gate/qa_summary.html
+            https://ErikSkroblien.github.io/test_github_quality_gate/qa_summary.html
             `
-
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
