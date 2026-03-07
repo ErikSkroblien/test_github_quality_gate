@@ -2,7 +2,7 @@ name: QA Dashboard
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main ]  # Nur PR-Trigger, keine Pushes → verhindert doppelte Checks
 
 jobs:
   dashboard:
