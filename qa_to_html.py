@@ -3,7 +3,6 @@
 import os
 import glob
 import json
-import re
 from datetime import datetime
 
 # --- Config ---
@@ -36,13 +35,6 @@ def analyze(file):
                 if evidence in INVALID_EVIDENCE or (answer and answer.upper() == "NO"):
                     open_questions += 1
     return questions, open_questions
-
-# --- JSON laden (optional für Trends) ---
-def load_previous():
-    if not os.path.exists(JSON_FILE):
-        return None
-    with open(JSON_FILE) as f:
-        return json.load(f)
 
 # --- JSON speichern ---
 def save_json(report):
