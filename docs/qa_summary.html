@@ -1,0 +1,110 @@
+
+<html>
+<head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body {
+font-family: Arial;
+margin:40px;
+}
+
+table {
+border-collapse: collapse;
+width:70%;
+}
+
+th {
+background:#2c3e50;
+color:white;
+padding:10px;
+}
+
+td {
+padding:8px;
+border-bottom:1px solid #ddd;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>QA Engineering Dashboard</h1>
+
+
+    <p><b>PR:</b> local</p>
+    <p><b>Author:</b> unknown</p>
+    <p><b>Commit:</b> local</p>
+    <p><b>Generated:</b> 2026-03-07T14:16:30.808975</p>
+    
+
+<h2>Module Status</h2>
+
+<table>
+<tr>
+<th>Module</th>
+<th>Questions</th>
+<th>Open</th>
+<th>Status</th>
+</tr>
+
+
+        <tr>
+        <td>qa_checklist.md</td>
+        <td>6</td>
+        <td>1</td>
+        <td style="color:red">FAIL</td>
+        </tr>
+        
+        <tr>
+        <td>qa_test.md</td>
+        <td>7</td>
+        <td>1</td>
+        <td style="color:red">FAIL</td>
+        </tr>
+        
+        <tr>
+        <td>qa_test2.md</td>
+        <td>3</td>
+        <td>0</td>
+        <td style="color:green">PASS</td>
+        </tr>
+        
+        <tr>
+        <td>qa_test3.md</td>
+        <td>3</td>
+        <td>1</td>
+        <td style="color:red">FAIL</td>
+        </tr>
+        
+
+</table>
+
+<h2>Open Questions Trend</h2>
+
+<canvas id="trendChart"></canvas>
+
+<script>
+
+const ctx = document.getElementById('trendChart');
+
+new Chart(ctx, {
+type: 'bar',
+data: {
+labels: ["qa_checklist.md","qa_test.md","qa_test2.md","qa_test3.md"],
+datasets: [{
+label: 'Open Questions',
+data: [1,1,0,1],
+backgroundColor: 'rgba(255,99,132,0.6)'
+}]
+}
+});
+
+</script>
+
+</body>
+</html>
