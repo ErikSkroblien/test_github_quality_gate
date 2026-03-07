@@ -2,11 +2,12 @@ name: QA PR Report
 
 on:
   pull_request:
+    branches: [ main ]
 
 jobs:
   qa-report:
     runs-on: ubuntu-latest
-    needs: dashboard   # Sicherstellen, dass Dashboard zuerst läuft
+    needs: dashboard
 
     steps:
       - name: Checkout

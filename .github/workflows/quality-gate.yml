@@ -2,6 +2,7 @@ name: QA Dashboard
 
 on:
   pull_request:
+    branches: [ main ]
 
 jobs:
   dashboard:
@@ -18,6 +19,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt || echo "No extra deps"
+
+      - name: Debug files
+        run: |
+          pwd
+          ls -la
 
       - name: Generate QA Dashboard
         run: python qa_to_html.py
