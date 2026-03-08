@@ -3,7 +3,7 @@
 ## Instructions
 - Jede Frage muss beantwortet werden mit `Answer: YES` oder `Answer: NO`
 - Evidence muss **nicht leer** sein (kein "-", "TBD", etc.)
-- Coverage ≥ 80%, falls angegeben
+- Coverage ">= 80%", falls angegeben
 - Jira Ticket, falls referenziert, muss korrekt formatiert sein
 
 ---
@@ -69,3 +69,13 @@ Evidence: GitHub Review durch @reviewername
 
 Answer: YES  
 Evidence: Jira SYS-1423
+
+---
+
+## Finding
+
+**Observation:** Big gaps in SCA and others
+
+**Impact:** major impact on customer delivery
+
+**Recommendation:** Fix the setup and introduce new ruleset

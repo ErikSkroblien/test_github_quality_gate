@@ -20,3 +20,13 @@ Answer: YES
 Evidence: Integration test pipeline job #3321 successful.
 
 Coverage: 88%
+
+---
+
+## Finding
+
+**Observation:** Big gaps in SCA
+
+**Impact:** major impact on customer delivery
+
+**Recommendation:** Fix the setup and introduce new ruleset
