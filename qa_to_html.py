@@ -4,6 +4,7 @@ import os
 import glob
 import json
 from datetime import datetime
+import requests
 
 # --- Config ---
 OUTPUT_DIR = "docs"
@@ -124,6 +125,63 @@ backgroundColor: 'rgba(255,99,132,0.6)'
     with open(HTML_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
+def read_jira_config():
+    with open("jira_config.yaml", "r", encoding="utf-8") as f:
+        import yaml
+        return yaml.safe_load(f)
+
+def create_jira_ticket(config, finding, file_name):
+    jira_url = config['jira']['base_url']
+    token = os.getenv("JIRA_TOKEN")
+    if not token:
+        raise ValueError("JIRA_TOKEN environment variable is not set.")
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "fields": {
+            "project": {"key": "TRIM"},
+            "summary": f"Problem in {file_name}: {finding['Observation']}",
+            "description": f"**Impact:** {finding['Impact']}\n\n**Recommendation:** {finding['Recommendation']}",
+            "issuetype": {"name": "Bug"},
+            "duedate": config['jira']['create_problem_ticket']['additional_fields']['due_date'],
+            "customfield_26728": config['jira']['create_problem_ticket']['additional_fields']['cf[26728]'],
+            "customfield_26726": config['jira']['create_problem_ticket']['additional_fields']['cf[26726]'],
+            "customfield_31220": config['jira']['create_problem_ticket']['additional_fields']['cf[31220]'],
+            "customfield_33921": config['jira']['create_problem_ticket']['additional_fields']['cf[33921]'],
+        }
+    }
+
+    response = requests.post(f"{jira_url}/rest/api/2/issue", headers=headers, json=payload)
+    if response.status_code != 201:
+        print(f"❌ Failed to create Jira ticket for {file_name}: {response.text}")
+    else:
+        print(f"✅ Created Jira ticket for {file_name}: {response.json()['key']}")
+
+def extract_findings(file):
+    findings = []
+    with open(file, encoding="utf-8") as f:
+        lines = f.readlines()
+        in_finding_section = False
+        finding = {}
+        for line in lines:
+            line = line.strip()
+            if line.startswith("## Finding"):
+                in_finding_section = True
+            elif in_finding_section:
+                if line.startswith("**Observation:**"):
+                    finding['Observation'] = line.split("**Observation:**")[-1].strip()
+                elif line.startswith("**Impact:**"):
+                    finding['Impact'] = line.split("**Impact:**")[-1].strip()
+                elif line.startswith("**Recommendation:**"):
+                    finding['Recommendation'] = line.split("**Recommendation:**")[-1].strip()
+                    findings.append(finding)
+                    finding = {}
+    return findings
+
 # --- Main ---
 def main():
     files = collect_files()
@@ -131,9 +189,15 @@ def main():
         print("⚠️ Keine qa_*.md Dateien gefunden. Dashboard wird trotzdem erstellt.")
 
     modules = []
+    config = read_jira_config()
+
     for file in files:
         q, open_q = analyze(file)
         modules.append({"file": os.path.basename(file), "questions": q, "open": open_q})
+
+        findings = extract_findings(file)
+        for finding in findings:
+            create_jira_ticket(config, finding, os.path.basename(file))
 
     report = {
         "time": datetime.utcnow().isoformat(),
