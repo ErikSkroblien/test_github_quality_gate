@@ -60,3 +60,13 @@ Coverage: 88%
 **Impact:** Workflow execution failure.
 
 **Recommendation:** Ensure all dependencies are installed in the workflow environment.
+
+---
+
+## Finding
+
+**Observation:** Missing `additional_fields` in Jira configuration.
+
+**Impact:** Jira ticket creation failure.
+
+**Recommendation:** Ensure `additional_fields` is defined in the Jira configuration file.
