@@ -31,9 +31,8 @@ jobs:
           pwd
           ls -la
 
-      - name: Set JIRA_TOKEN environment variable
-        env:
-          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+      - name: Export JIRA_TOKEN
+        run: echo "JIRA_TOKEN=${{ secrets.JIRA_TOKEN }}" >> $GITHUB_ENV
 
       - name: Generate QA Dashboard
         run: python qa_to_html.py
