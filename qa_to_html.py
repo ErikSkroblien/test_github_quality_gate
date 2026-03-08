@@ -130,6 +130,19 @@ def read_jira_config():
         import yaml
         return yaml.safe_load(f)
 
+def handle_jira_response(response):
+    if response.status_code == 200:
+        if response.headers.get("Content-Type", "").startswith("application/json"):
+            return response.json()
+        else:
+            print("❌ Error: Received HTML response instead of JSON. Check Jira URL and authentication.")
+            print("Response Content:", response.text)
+            return None
+    else:
+        print(f"❌ Error: Jira API returned status code {response.status_code}")
+        print("Response Content:", response.text)
+        return None
+
 def create_jira_ticket(config, finding, file_name):
     jira_url = config['jira']['base_url']
     token = os.getenv("JIRA_TOKEN")
@@ -166,27 +179,11 @@ def create_jira_ticket(config, finding, file_name):
     }
 
     response = requests.post(f"{jira_url}/rest/api/2/issue", headers=headers, json=payload)
-    # Log the Jira API response for debugging
-    print(f"Jira API Response: {response.status_code} - {response.text}")
-    # Log detailed Jira API response for debugging
-    print("--- Jira API Debug Info ---")
-    print(f"Request URL: {jira_url}/rest/api/2/issue")
-    print(f"Request Headers: {headers}")
-    print(f"Request Payload: {payload}")
-    print(f"Response Status Code: {response.status_code}")
-    print(f"Response Text: {response.text}")
-    print("---------------------------")
-    
-    # Check if the response is HTML instead of JSON
-    if response.headers.get("Content-Type", "").startswith("text/html"):
-        print("❌ Error: Received HTML response instead of JSON. Check Jira URL and authentication.")
-        print(f"Response Content: {response.text}")
-        return
-
-    if response.status_code != 201:
-        print(f"❌ Failed to create Jira ticket for {file_name}: {response.text}")
+    result = handle_jira_response(response)
+    if result is None:
+        print(f"❌ Failed to create Jira ticket for {file_name}: {finding['Observation']}")
     else:
-        print(f"✅ Created Jira ticket for {file_name}: {response.json()['key']}")
+        print(f"✅ Jira ticket created successfully for {file_name}: {finding['Observation']}")
 
 def extract_findings(file):
     findings = []
