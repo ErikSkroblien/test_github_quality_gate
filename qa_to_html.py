@@ -141,6 +141,10 @@ def create_jira_ticket(config, finding, file_name):
         "Content-Type": "application/json"
     }
 
+    # Ensure 'additional_fields' exists in the configuration
+    if 'additional_fields' not in config['jira']['create_problem_ticket']:
+        raise KeyError("'additional_fields' is missing in the Jira configuration.")
+
     payload = {
         "fields": {
             "project": {"key": "TRIM"},
