@@ -20,3 +20,13 @@ Coverage: 92%
 
 Answer: NO  
 Evidence: Module classified ASIL-A.
+
+---
+
+## Finding
+
+**Observation:** major issue
+
+**Impact:** test
+
+**Recommendation:** fix the issue by implementing a good solution
