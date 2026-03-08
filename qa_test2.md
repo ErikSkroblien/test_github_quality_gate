@@ -43,7 +43,7 @@ Coverage: 88%
 
 **Recommendation:** Investigate and resolve integration test failures promptly.
 
-**Resolution:** Addressed integration test issues and ensured pipeline stability.
+**Resolution:** Integration test failures resolved, and pipeline stability ensured.
 
 ---
 
@@ -54,6 +54,8 @@ Coverage: 88%
 **Impact:** May lead to potential security vulnerabilities.
 
 **Recommendation:** Review and address the static analysis findings immediately.
+
+**Resolution:** Static analysis findings reviewed and addressed to mitigate security risks.
 
 ---
 
