@@ -28,6 +28,12 @@ jobs:
         run: |
           pip install pyyaml
 
+      - name: Debug JIRA_TOKEN
+        run: |
+          echo "JIRA_TOKEN is set to: $JIRA_TOKEN"
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+
       - name: Create Problem Tickets
         env:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}

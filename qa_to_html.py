@@ -3,7 +3,7 @@
 import os
 import glob
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 
 # --- Config ---
@@ -168,6 +168,21 @@ def create_jira_ticket(config, finding, file_name):
     response = requests.post(f"{jira_url}/rest/api/2/issue", headers=headers, json=payload)
     # Log the Jira API response for debugging
     print(f"Jira API Response: {response.status_code} - {response.text}")
+    # Log detailed Jira API response for debugging
+    print("--- Jira API Debug Info ---")
+    print(f"Request URL: {jira_url}/rest/api/2/issue")
+    print(f"Request Headers: {headers}")
+    print(f"Request Payload: {payload}")
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Text: {response.text}")
+    print("---------------------------")
+    
+    # Check if the response is HTML instead of JSON
+    if response.headers.get("Content-Type", "").startswith("text/html"):
+        print("❌ Error: Received HTML response instead of JSON. Check Jira URL and authentication.")
+        print(f"Response Content: {response.text}")
+        return
+
     if response.status_code != 201:
         print(f"❌ Failed to create Jira ticket for {file_name}: {response.text}")
     else:
@@ -212,7 +227,7 @@ def main():
             create_jira_ticket(config, finding, os.path.basename(file))
 
     report = {
-        "time": datetime.utcnow().isoformat(),
+        "time": datetime.now(timezone.utc).isoformat(),
         "modules": modules,
         "pr": os.getenv("PR_NUMBER", "local"),
         "author": os.getenv("PR_AUTHOR", "unknown"),
