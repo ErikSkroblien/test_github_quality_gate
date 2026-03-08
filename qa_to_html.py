@@ -168,6 +168,14 @@ def create_jira_ticket(config, finding, file_name):
     response = requests.post(f"{jira_url}/rest/api/2/issue", headers=headers, json=payload)
     # Log the Jira API response for debugging
     print(f"Jira API Response: {response.status_code} - {response.text}")
+    # Log detailed Jira API response for debugging
+    print("--- Jira API Debug Info ---")
+    print(f"Request URL: {jira_url}/rest/api/2/issue")
+    print(f"Request Headers: {headers}")
+    print(f"Request Payload: {payload}")
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Text: {response.text}")
+    print("---------------------------")
     if response.status_code != 201:
         print(f"❌ Failed to create Jira ticket for {file_name}: {response.text}")
     else:
