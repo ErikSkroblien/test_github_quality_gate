@@ -25,8 +25,8 @@ Evidence: Module classified ASIL-A.
 
 ## Finding
 
-**Observation:** Describe any findings or observations here.
+**Observation:** major issue
 
-**Impact:** Describe the impact of the findings here.
+**Impact:** test
 
-**Recommendation:** Provide recommendations to address the findings.
+**Recommendation:** fix the issue by implementing a good solution

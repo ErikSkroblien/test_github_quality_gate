@@ -74,8 +74,8 @@ Evidence: Jira SYS-1423
 
 ## Finding
 
-**Observation:** Describe any findings or observations here.
+**Observation:** Big gaps in SCA and others
 
-**Impact:** Describe the impact of the findings here.
+**Impact:** major impact on customer delivery
 
-**Recommendation:** Provide recommendations to address the findings.
+**Recommendation:** Fix the setup and introduce new ruleset
