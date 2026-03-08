@@ -30,3 +30,13 @@ Coverage: 88%
 **Impact:** major impact on customer delivery
 
 **Recommendation:** Fix the setup and introduce new ruleset
+
+---
+
+## Finding
+
+**Observation:** Additional issue identified in integration tests.
+
+**Impact:** Potential delays in delivery timeline.
+
+**Recommendation:** Investigate and resolve integration test failures promptly.
