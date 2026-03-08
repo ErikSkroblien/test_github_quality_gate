@@ -176,6 +176,13 @@ def create_jira_ticket(config, finding, file_name):
     print(f"Response Status Code: {response.status_code}")
     print(f"Response Text: {response.text}")
     print("---------------------------")
+    
+    # Check if the response is HTML instead of JSON
+    if response.headers.get("Content-Type", "").startswith("text/html"):
+        print("❌ Error: Received HTML response instead of JSON. Check Jira URL and authentication.")
+        print(f"Response Content: {response.text}")
+        return
+
     if response.status_code != 201:
         print(f"❌ Failed to create Jira ticket for {file_name}: {response.text}")
     else:
