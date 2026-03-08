@@ -3,7 +3,7 @@
 import os
 import glob
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 
 # --- Config ---
@@ -227,7 +227,7 @@ def main():
             create_jira_ticket(config, finding, os.path.basename(file))
 
     report = {
-        "time": datetime.utcnow().isoformat(),
+        "time": datetime.now(timezone.utc).isoformat(),
         "modules": modules,
         "pr": os.getenv("PR_NUMBER", "local"),
         "author": os.getenv("PR_AUTHOR", "unknown"),

@@ -31,6 +31,8 @@ Coverage: 88%
 
 **Recommendation:** Fix the setup and introduce new ruleset
 
+**Resolution:** Updated SCA ruleset and fixed setup as per recommendation.
+
 ---
 
 ## Finding
@@ -40,6 +42,8 @@ Coverage: 88%
 **Impact:** Potential delays in delivery timeline.
 
 **Recommendation:** Investigate and resolve integration test failures promptly.
+
+**Resolution:** Addressed integration test issues and ensured pipeline stability.
 
 ---
 
