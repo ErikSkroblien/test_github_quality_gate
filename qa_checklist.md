@@ -68,3 +68,13 @@ Evidence: Module classified ASIL-A and unaffected.
 Answer: YES
 
 Evidence: GitHub review by @reviewername
+
+---
+
+## Finding
+
+**Observation:** Describe any findings or observations here.
+
+**Impact:** Describe the impact of the findings here.
+
+**Recommendation:** Provide recommendations to address the findings.

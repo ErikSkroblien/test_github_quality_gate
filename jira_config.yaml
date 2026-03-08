@@ -1,0 +1,17 @@
+# YAML configuration for creating problem tickets in Jira
+jira:
+  base_url: "https://rb-tracker.bosch.com/tracker08-q/"
+  create_problem_ticket:
+    relates_to:
+      # Extracts the Jira key from the branch name
+      branch_key_pattern: "[A-Z]+-[0-9]+"
+      # Example: If branch is feature/TEST-123, it will link to TEST-123
+    additional_fields:
+      reporter: "{{commit_author}}"  # Automatically set to the commit author
+      approver: "{{commit_author}}"  # Automatically set to the commit author
+      due_date: "{{today + 6 weeks}}"  # Automatically set to 6 weeks from today
+      cf[26728]: "Medium"  # Set Severity to Medium
+      cf[26726]: "Project Internal"  # Set Origin to Project Internal
+      cf[31220]: "No"  # Set Safety Relevance to No
+      cf[33921]: "Quality Activity"  # Set Detection Activity to Quality Activity
+      description_from_finding: true  # Include the 'Finding' section from the modified markdown files

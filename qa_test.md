@@ -69,3 +69,13 @@ Evidence: GitHub Review durch @reviewername
 
 Answer: YES  
 Evidence: Jira SYS-1423
+
+---
+
+## Finding
+
+**Observation:** Describe any findings or observations here.
+
+**Impact:** Describe the impact of the findings here.
+
+**Recommendation:** Provide recommendations to address the findings.
