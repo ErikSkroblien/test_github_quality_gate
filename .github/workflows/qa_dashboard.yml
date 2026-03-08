@@ -31,5 +31,9 @@ jobs:
           pwd
           ls -la
 
+      - name: Set JIRA_TOKEN environment variable
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+
       - name: Generate QA Dashboard
         run: python qa_to_html.py
