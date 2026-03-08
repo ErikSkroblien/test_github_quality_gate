@@ -141,9 +141,15 @@ def create_jira_ticket(config, finding, file_name):
         "Content-Type": "application/json"
     }
 
-    # Ensure 'additional_fields' exists in the configuration
+    # Provide default values for 'additional_fields' if missing
     if 'additional_fields' not in config['jira']['create_problem_ticket']:
-        raise KeyError("'additional_fields' is missing in the Jira configuration.")
+        config['jira']['create_problem_ticket']['additional_fields'] = {
+            'due_date': '2026-12-31',
+            'cf[26728]': 'Default Value 1',
+            'cf[26726]': 'Default Value 2',
+            'cf[31220]': 'Default Value 3',
+            'cf[33921]': 'Default Value 4'
+        }
 
     payload = {
         "fields": {

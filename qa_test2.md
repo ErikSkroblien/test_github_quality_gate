@@ -70,3 +70,13 @@ Coverage: 88%
 **Impact:** Jira ticket creation failure.
 
 **Recommendation:** Ensure `additional_fields` is defined in the Jira configuration file.
+
+---
+
+## Finding
+
+**Observation:** 'additional_fields' key missing in Jira configuration.
+
+**Impact:** Script crashes during Jira ticket creation.
+
+**Recommendation:** Update the Jira configuration file to include the 'additional_fields' key with appropriate values.
