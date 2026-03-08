@@ -80,3 +80,13 @@ Coverage: 88%
 **Impact:** Script crashes during Jira ticket creation.
 
 **Recommendation:** Update the Jira configuration file to include the 'additional_fields' key with appropriate values.
+
+---
+
+## Finding
+
+**Observation:** Missing JIRA_TOKEN environment variable.
+
+**Impact:** Script crashes during Jira ticket creation.
+
+**Recommendation:** Set the JIRA_TOKEN environment variable in the workflow configuration.
