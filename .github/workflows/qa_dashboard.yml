@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt || echo "No extra deps"
 
+      - name: Install additional dependencies
+        run: pip install pyyaml requests
+
       - name: Debug files
         run: |
           pwd
