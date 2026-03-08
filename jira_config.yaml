@@ -1,6 +1,8 @@
 # YAML configuration for creating problem tickets in Jira
 jira:
   base_url: "https://rb-tracker.bosch.com/tracker08-q/"
+  authentication:
+    token_env_var: "JIRA_TOKEN"  # Use the JIRA_TOKEN secret from GitHub Actions
   create_problem_ticket:
     relates_to:
       # Extracts the Jira key from the branch name
