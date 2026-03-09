@@ -171,17 +171,29 @@ def execute_jira_request(method, path, headers, body=None):
 # --- Jira Ticket erstellen ---
 def create_jira_ticket(config, finding, file_name):
     headers = get_jira_headers()
+    additional_fields = config['jira']['create_problem_ticket'].get('additional_fields', {})
+
+    # Beschreibung der zusätzlichen Felder anpassen
     payload = {
         "fields": {
             "project": {"key": "TRIM"},
             "summary": f"Problem in {file_name}: {finding['Observation']}",
-            "description": f"**Impact:** {finding['Impact']}\n\n**Recommendation:** {finding['Recommendation']}",
+            "description": (
+                f"**Impact:** {finding['Impact']}\n\n"
+                f"**Recommendation:** {finding['Recommendation']}\n\n"
+                f"**Additional Fields:**\n"
+                f"- Due Date: {additional_fields.get('due_date', 'N/A')}\n"
+                f"- Custom Field 26728 (Priority): {additional_fields.get('cf[26728]', 'Medium')}\n"
+                f"- Custom Field 26726 (Category): {additional_fields.get('cf[26726]', 'Other')}\n"
+                f"- Custom Field 31220 (Approval): {additional_fields.get('cf[31220]', 'No')}\n"
+                f"- Custom Field 33921 (Activity): {additional_fields.get('cf[33921]', 'Quality Activity')}"
+            ),
             "issuetype": {"name": "Bug"},
-            "duedate": config['jira']['create_problem_ticket']['additional_fields']['due_date'],
-            "customfield_26728": config['jira']['create_problem_ticket']['additional_fields']['cf[26728]'],
-            "customfield_26726": config['jira']['create_problem_ticket']['additional_fields']['cf[26726]'],
-            "customfield_31220": config['jira']['create_problem_ticket']['additional_fields']['cf[31220]'],
-            "customfield_33921": config['jira']['create_problem_ticket']['additional_fields']['cf[33921]'],
+            "duedate": additional_fields.get('due_date', ""),
+            "customfield_26728": additional_fields.get('cf[26728]', "Medium"),
+            "customfield_26726": additional_fields.get('cf[26726]', "Other"),
+            "customfield_31220": additional_fields.get('cf[31220]', "No"),
+            "customfield_33921": additional_fields.get('cf[33921]', "Quality Activity"),
         }
     }
 
