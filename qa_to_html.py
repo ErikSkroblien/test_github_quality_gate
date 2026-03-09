@@ -5,6 +5,8 @@ import glob
 import json
 from datetime import datetime, timezone
 import requests
+import http.client
+from urllib.parse import urlencode
 
 # --- Config ---
 OUTPUT_DIR = "docs"
@@ -130,40 +132,45 @@ def read_jira_config():
         import yaml
         return yaml.safe_load(f)
 
-def handle_jira_response(response):
-    if response.status_code == 200:
-        if response.headers.get("Content-Type", "").startswith("application/json"):
-            return response.json()
-        else:
-            print("❌ Error: Received HTML response instead of JSON. Check Jira URL and authentication.")
-            print("Response Content:", response.text)
-            return None
-    else:
-        print(f"❌ Error: Jira API returned status code {response.status_code}")
-        print("Response Content:", response.text)
-        return None
+# --- Jira Konfiguration ---
+JIRA_HOST = "rb-tracker.bosch.com"
+JIRA_BASE_PATH = "/tracker08-q"
+JIRA_CREATE_ISSUE_ENDPOINT = f"{JIRA_BASE_PATH}/rest/api/2/issue/"
 
-def create_jira_ticket(config, finding, file_name):
-    jira_url = config['jira']['base_url']
+# --- Standard Header für Jira API ---
+def get_jira_headers():
     token = os.getenv("JIRA_TOKEN")
     if not token:
         raise ValueError("JIRA_TOKEN environment variable is not set.")
-
-    headers = {
+    return {
         "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "Python Script using http.client"
     }
 
-    # Provide default values for 'additional_fields' if missing
-    if 'additional_fields' not in config['jira']['create_problem_ticket']:
-        config['jira']['create_problem_ticket']['additional_fields'] = {
-            'due_date': '2026-12-31',
-            'cf[26728]': 'Default Value 1',
-            'cf[26726]': 'Default Value 2',
-            'cf[31220]': 'Default Value 3',
-            'cf[33921]': 'Default Value 4'
-        }
+# --- HTTP-Anfrage an Jira API ---
+def execute_jira_request(method, path, headers, body=None):
+    conn = None
+    try:
+        conn = http.client.HTTPSConnection(JIRA_HOST)
+        conn.request(method, path, body, headers)
+        response = conn.getresponse()
+        response_body = response.read().decode("utf-8")
 
+        if response.status >= 400:
+            raise http.client.HTTPException(f"HTTP {response.status}: {response.reason}\n{response_body}")
+
+        return json.loads(response_body) if response_body else {}
+    except Exception as e:
+        print(f"❌ Fehler bei der Jira-Anfrage: {e}")
+        return None
+    finally:
+        if conn:
+            conn.close()
+
+# --- Jira Ticket erstellen ---
+def create_jira_ticket(config, finding, file_name):
+    headers = get_jira_headers()
     payload = {
         "fields": {
             "project": {"key": "TRIM"},
@@ -178,12 +185,13 @@ def create_jira_ticket(config, finding, file_name):
         }
     }
 
-    response = requests.post(f"{jira_url}/rest/api/2/issue", headers=headers, json=payload)
-    result = handle_jira_response(response)
-    if result is None:
-        print(f"❌ Failed to create Jira ticket for {file_name}: {finding['Observation']}")
+    response = execute_jira_request("POST", JIRA_CREATE_ISSUE_ENDPOINT, headers, body=json.dumps(payload))
+    if response and response.get('key'):
+        print(f"✅ Jira-Ticket erstellt: {response.get('key')}")
     else:
-        print(f"✅ Jira ticket created successfully for {file_name}: {finding['Observation']}")
+        error_message = response.get('errorMessages', 'Unbekannter Fehler') if response else 'Keine Antwort vom Server'
+        print(f"❌ Fehler beim Erstellen des Jira-Tickets für {file_name}: {finding['Observation']}")
+        print(f"Fehlermeldung: {error_message}")
 
 def extract_findings(file):
     findings = []

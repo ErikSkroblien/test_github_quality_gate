@@ -68,3 +68,15 @@ Evidence: Module classified ASIL-A and unaffected.
 Answer: YES
 
 Evidence: GitHub review by @reviewername
+
+---
+
+## 2. Code Review
+
+**Q2:** Has the code been reviewed by at least two developers?
+
+Answer: NO
+
+Evidence: Pending review from team members.
+
+---
