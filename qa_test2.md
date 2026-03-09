@@ -96,3 +96,15 @@ Coverage: 88%
 **Impact:** Script crashes during Jira ticket creation.
 
 **Recommendation:** Set the JIRA_TOKEN environment variable in the workflow configuration.
+
+---
+
+## Finding
+
+**Observation:** Example observation added for testing.
+
+**Impact:** Example impact description.
+
+**Recommendation:** Example recommendation for resolving the issue.
+
+**Resolution:** Example resolution to address the finding.
