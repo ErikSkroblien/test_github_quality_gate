@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import requests
 import http.client
 from urllib.parse import urlencode
+import sys  # Import sys for exit function
 
 # --- Config ---
 OUTPUT_DIR = "docs"
@@ -141,7 +142,10 @@ JIRA_CREATE_ISSUE_ENDPOINT = f"{JIRA_BASE_PATH}/rest/api/2/issue/"
 def get_jira_headers():
     token = os.getenv("JIRA_TOKEN")
     if not token:
+        print("❌ JIRA_TOKEN is not set or accessible in the environment.")
         raise ValueError("JIRA_TOKEN environment variable is not set.")
+    else:
+        print("✅ JIRA_TOKEN successfully retrieved.")
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
@@ -204,6 +208,11 @@ def create_jira_ticket(config, finding, file_name):
         error_message = response.get('errorMessages', 'Unbekannter Fehler') if response else 'Keine Antwort vom Server'
         print(f"❌ Fehler beim Erstellen des Jira-Tickets für {file_name}: {finding['Observation']}")
         print(f"Fehlermeldung: {error_message}")
+
+    if response is None:
+        print(f"❌ Fehler beim Erstellen des Jira-Tickets für {file_name}: {finding['Observation']}")
+        print("Fehlermeldung: Keine Antwort vom Server")
+        sys.exit(1)  # Exit with a non-zero status code to indicate failure
 
 def extract_findings(file):
     findings = []

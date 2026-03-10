@@ -34,6 +34,16 @@ jobs:
         env:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
 
+      - name: Validate JIRA_TOKEN
+        run: |
+          if [ -z "$JIRA_TOKEN" ]; then
+            echo "JIRA_TOKEN is not set. Failing the job."
+            exit 1
+          fi
+
+      - name: Export JIRA_TOKEN
+        run: echo "JIRA_TOKEN=${{ secrets.JIRA_TOKEN }}" >> $GITHUB_ENV
+
       - name: Create Problem Tickets
         env:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
