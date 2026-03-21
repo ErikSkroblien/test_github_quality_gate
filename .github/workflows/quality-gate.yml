@@ -2,7 +2,12 @@ name: QA Dashboard
 
 on:
   pull_request:
-    branches: [ main ]  # Nur PR-Trigger, keine Pushes → verhindert doppelte Checks
+    branches: [ main ]
+
+# 🔹 Nur ein Job pro PR / Branch, alte Jobs abbrechen
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   dashboard:

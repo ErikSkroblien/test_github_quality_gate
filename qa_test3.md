@@ -12,7 +12,7 @@ Evidence: Jira SYS-1023 requirement mapped to braking module.
 Answer: YES  
 Evidence: test_brake_controller.cpp implemented.
 
-Coverage: 92%
+Coverage: 94%
 
 ---
 
